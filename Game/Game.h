@@ -1,0 +1,12 @@
+// 
+// Game
+// Responsible for:
+// - game specific logic
+// - game objects and entities
+// - rending ui and hud
+// - scene and level management
+// - loading gameplay assets
+// 
+
+#pragma once
+
