@@ -9,4 +9,8 @@
 // 
 
 #pragma once
+#include "IEngine.h"
 
+class Engine : public IEngine {
+
+};

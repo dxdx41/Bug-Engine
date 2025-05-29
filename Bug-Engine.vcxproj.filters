@@ -11,20 +11,40 @@
     <Filter Include="Game">
       <UniqueIdentifier>{c3930cb1-f09b-41af-b131-f1225c6e81db}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{502ef1dc-ae35-4533-ad0c-ef588d8278e9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
-    <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="Game\Game.cpp">
+      <Filter>Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Util\Log.cpp">
+      <Filter>Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
       <Filter>Engine</Filter>
     </ClInclude>
-    <ClInclude Include="Game\Game.h" />
-    <ClInclude Include="Game\IGame.h" />
-    <ClInclude Include="Engine\IEngine.h" />
+    <ClInclude Include="Game\Game.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Game\IGame.h">
+      <Filter>Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\IEngine.h">
+      <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Log.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Helper.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
