@@ -12,6 +12,10 @@
 #include "IGame.h"
 
 class Game : public IGame {
-
-
+public:
+	Game() = default;
+	~Game();
+	
+	void OnInit() override;
+private:
 };

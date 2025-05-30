@@ -136,13 +136,14 @@
     <ClCompile Include="external\glfw\src\xkb_unicode.c">
       <Filter>external\glfw</Filter>
     </ClCompile>
-    <ClCompile Include="glfwtest.cpp" />
+    <ClCompile Include="Main.cpp" />
     <ClCompile Include="external\glfw\deps\getopt.c">
       <Filter>external\glfw</Filter>
     </ClCompile>
     <ClCompile Include="external\glfw\deps\tinycthread.c">
       <Filter>external\glfw</Filter>
     </ClCompile>
+    <ClCompile Include="Engine\Renderer\D3DRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -262,5 +263,8 @@
     <ClInclude Include="external\glfw\deps\mingw\xinput.h">
       <Filter>external\glfw</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Renderer\IRenderer.h" />
+    <ClInclude Include="Engine\Renderer\D3DRenderer.h" />
+    <ClInclude Include="Util\Color.h" />
   </ItemGroup>
 </Project>
