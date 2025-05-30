@@ -12,8 +12,6 @@ struct ColorNorm {
 };
 
 
-
-
 inline ColorNorm ColorRGB::normalized() const {
 	return ColorNorm{
 		r / 255.0f,

@@ -6,7 +6,6 @@
 // - Timing and main game loop
 // - Engine resources (textures, shaders, assets)
 // 
-// 
 
 #pragma once
 #include "IEngine.h"

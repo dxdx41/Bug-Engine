@@ -14,7 +14,7 @@ bool Engine::Initialize() {
         return false;
     Log.info("GLFW initialized");
 
-    window = glfwCreateWindow(1280, 720, "Hello World", nullptr, nullptr);
+    window = glfwCreateWindow(1280, 720, "the game", nullptr, nullptr);
     if (!window)
     {
         Log.error("Failed to create window, terminating GLFW");
@@ -40,7 +40,7 @@ void Engine::Run() {
     Log.info("Running engine");
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        pRenderer->ClearBackground({ 235, 143, 52, 255 });
+        pRenderer->ClearBackground({ 0, 0, 0, 255 });
         pRenderer->Present();
     }
 }
