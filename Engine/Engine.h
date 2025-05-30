@@ -15,14 +15,13 @@
 #include <Windows.h>
 #include <memory>
 #include "Renderer/D3DRenderer.h"
-#include "Game/IGame.h"
 
 class Engine : public IEngine {
 public:
 	Engine() = default;
 	~Engine() override;
 	bool Initialize() override;
-	void Run() override;
+	void Run(IGame* pGame) override;
 	void Shutdown() override;
 private:
 	/* window */
@@ -31,7 +30,7 @@ private:
 	/* renderer */
 	std::unique_ptr<IRenderer> pRenderer{ nullptr };
 
-	std::unique_ptr<IGame> game{ nullptr };
+	IGame* pGame{ nullptr };
 
 	void InitializeLogging();
 };

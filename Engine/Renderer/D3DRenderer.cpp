@@ -120,7 +120,6 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 }
 
 void D3DRenderer::Shutdown() {
-	Log.info("Shutting down renderer...");
 }
 
 /* drawing */

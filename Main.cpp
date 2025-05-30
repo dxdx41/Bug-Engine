@@ -5,13 +5,17 @@
 #include "Util/Log.h"
 #include "Util/Helper.h"
 
+#include <iostream>
+
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     IEngine* engine{ new Engine() };
     engine->Initialize();
-    Game game;
 
-    engine->Run();
+
+    Game game;
+    engine->Run(&game);
+
 
     engine->Shutdown();
     delete engine;

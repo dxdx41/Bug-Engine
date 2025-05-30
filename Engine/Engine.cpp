@@ -22,7 +22,7 @@ bool Engine::Initialize() {
         return false;
     }
     Log.info("GLFW window created");
-    hWnd = glfwGetWin32Window(window);
+    this->hWnd = glfwGetWin32Window(window);
     if (!hWnd) { Log.error("hWnd is invalid"); }
 
     /* RENDERER INITIALIZATION */
@@ -36,8 +36,11 @@ bool Engine::Initialize() {
     return true;
 }
 
-void Engine::Run() {
+void Engine::Run(IGame* pGame) {
     Log.info("Running engine");
+
+    this->pGame = pGame;
+
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         pRenderer->ClearBackground({ 0, 0, 0, 255 });
