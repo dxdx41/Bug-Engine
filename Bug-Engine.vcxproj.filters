@@ -20,6 +20,9 @@
     <Filter Include="external\glfw">
       <UniqueIdentifier>{84c4cd80-7177-42e4-9560-97049b103070}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Engine\Renderer">
+      <UniqueIdentifier>{62547a66-a9d2-4251-b0ae-c99b9b489263}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp">
@@ -143,7 +146,9 @@
     <ClCompile Include="external\glfw\deps\tinycthread.c">
       <Filter>external\glfw</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\Renderer\D3DRenderer.cpp" />
+    <ClCompile Include="Engine\Renderer\D3DRenderer.cpp">
+      <Filter>Engine\Renderer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
@@ -263,8 +268,14 @@
     <ClInclude Include="external\glfw\deps\mingw\xinput.h">
       <Filter>external\glfw</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Renderer\IRenderer.h" />
-    <ClInclude Include="Engine\Renderer\D3DRenderer.h" />
-    <ClInclude Include="Util\Color.h" />
+    <ClInclude Include="Engine\Renderer\IRenderer.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Renderer\D3DRenderer.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Color.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
