@@ -34,6 +34,7 @@ void Logger::Init(bool LogToConsole/*  = true  */, bool LogToFile/*  = false  */
 		hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 		if (hStdout == INVALID_HANDLE_VALUE) {
 			MessageBox(NULL, TEXT("Invalid StdOut handle, no console logging"), TEXT("Logger::Init"), NULL);
+			Logger::logToConsole = false;
 		}
 	}
 	if (LogToFile) {

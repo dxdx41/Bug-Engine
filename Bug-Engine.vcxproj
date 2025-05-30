@@ -47,9 +47,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)external\glfw\include;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -63,9 +63,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_GLFW_WIN32;_CRT_SECURE_NO_WARNINGS;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)external\glfw\include;$(ProjectDir)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -77,13 +77,83 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="external\glfw\deps\getopt.c" />
+    <ClCompile Include="external\glfw\deps\tinycthread.c" />
+    <ClCompile Include="external\glfw\src\cocoa_time.c" />
+    <ClCompile Include="external\glfw\src\context.c" />
+    <ClCompile Include="external\glfw\src\egl_context.c" />
+    <ClCompile Include="external\glfw\src\glx_context.c" />
+    <ClCompile Include="external\glfw\src\init.c" />
+    <ClCompile Include="external\glfw\src\input.c" />
+    <ClCompile Include="external\glfw\src\linux_joystick.c" />
+    <ClCompile Include="external\glfw\src\monitor.c" />
+    <ClCompile Include="external\glfw\src\null_init.c" />
+    <ClCompile Include="external\glfw\src\null_joystick.c" />
+    <ClCompile Include="external\glfw\src\null_monitor.c" />
+    <ClCompile Include="external\glfw\src\null_window.c" />
+    <ClCompile Include="external\glfw\src\osmesa_context.c" />
+    <ClCompile Include="external\glfw\src\platform.c" />
+    <ClCompile Include="external\glfw\src\posix_module.c" />
+    <ClCompile Include="external\glfw\src\posix_poll.c" />
+    <ClCompile Include="external\glfw\src\posix_thread.c" />
+    <ClCompile Include="external\glfw\src\posix_time.c" />
+    <ClCompile Include="external\glfw\src\vulkan.c" />
+    <ClCompile Include="external\glfw\src\wgl_context.c" />
+    <ClCompile Include="external\glfw\src\win32_init.c" />
+    <ClCompile Include="external\glfw\src\win32_joystick.c" />
+    <ClCompile Include="external\glfw\src\win32_module.c" />
+    <ClCompile Include="external\glfw\src\win32_monitor.c" />
+    <ClCompile Include="external\glfw\src\win32_thread.c" />
+    <ClCompile Include="external\glfw\src\win32_time.c" />
+    <ClCompile Include="external\glfw\src\win32_window.c" />
+    <ClCompile Include="external\glfw\src\window.c" />
+    <ClCompile Include="external\glfw\src\wl_init.c" />
+    <ClCompile Include="external\glfw\src\wl_monitor.c" />
+    <ClCompile Include="external\glfw\src\wl_window.c" />
+    <ClCompile Include="external\glfw\src\x11_init.c" />
+    <ClCompile Include="external\glfw\src\x11_monitor.c" />
+    <ClCompile Include="external\glfw\src\x11_window.c" />
+    <ClCompile Include="external\glfw\src\xkb_unicode.c" />
     <ClCompile Include="Game\Game.cpp" />
+    <ClCompile Include="glfwtest.cpp" />
     <ClCompile Include="Util\Log.cpp" />
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\IEngine.h" />
+    <ClInclude Include="external\glfw\deps\getopt.h" />
+    <ClInclude Include="external\glfw\deps\glad\gl.h" />
+    <ClInclude Include="external\glfw\deps\glad\gles2.h" />
+    <ClInclude Include="external\glfw\deps\glad\vulkan.h" />
+    <ClInclude Include="external\glfw\deps\linmath.h" />
+    <ClInclude Include="external\glfw\deps\mingw\dinput.h" />
+    <ClInclude Include="external\glfw\deps\mingw\xinput.h" />
+    <ClInclude Include="external\glfw\deps\mingw\_mingw_dxhelper.h" />
+    <ClInclude Include="external\glfw\deps\nuklear.h" />
+    <ClInclude Include="external\glfw\deps\nuklear_glfw_gl2.h" />
+    <ClInclude Include="external\glfw\deps\stb_image_write.h" />
+    <ClInclude Include="external\glfw\deps\tinycthread.h" />
+    <ClInclude Include="external\glfw\include\GLFW\glfw3.h" />
+    <ClInclude Include="external\glfw\include\GLFW\glfw3native.h" />
+    <ClInclude Include="external\glfw\src\cocoa_joystick.h" />
+    <ClInclude Include="external\glfw\src\cocoa_platform.h" />
+    <ClInclude Include="external\glfw\src\cocoa_time.h" />
+    <ClInclude Include="external\glfw\src\internal.h" />
+    <ClInclude Include="external\glfw\src\linux_joystick.h" />
+    <ClInclude Include="external\glfw\src\mappings.h" />
+    <ClInclude Include="external\glfw\src\null_joystick.h" />
+    <ClInclude Include="external\glfw\src\null_platform.h" />
+    <ClInclude Include="external\glfw\src\platform.h" />
+    <ClInclude Include="external\glfw\src\posix_poll.h" />
+    <ClInclude Include="external\glfw\src\posix_thread.h" />
+    <ClInclude Include="external\glfw\src\posix_time.h" />
+    <ClInclude Include="external\glfw\src\win32_joystick.h" />
+    <ClInclude Include="external\glfw\src\win32_platform.h" />
+    <ClInclude Include="external\glfw\src\win32_thread.h" />
+    <ClInclude Include="external\glfw\src\win32_time.h" />
+    <ClInclude Include="external\glfw\src\wl_platform.h" />
+    <ClInclude Include="external\glfw\src\x11_platform.h" />
+    <ClInclude Include="external\glfw\src\xkb_unicode.h" />
     <ClInclude Include="Game\Game.h" />
     <ClInclude Include="Game\IGame.h" />
     <ClInclude Include="Util\Helper.h" />

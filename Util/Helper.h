@@ -2,7 +2,8 @@
 #include <Windows.h>
 #include <stdio.h>
 
-inline void DebugConsole() {
+inline void DebugConsole(bool open) {
+	if (!open) return;
 	AllocConsole();
 	SetConsoleTitle(TEXT("Debug Console"));
 	freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);

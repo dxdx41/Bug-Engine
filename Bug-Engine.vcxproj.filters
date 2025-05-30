@@ -14,9 +14,14 @@
     <Filter Include="Util">
       <UniqueIdentifier>{502ef1dc-ae35-4533-ad0c-ef588d8278e9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="external">
+      <UniqueIdentifier>{e584c3bd-4d36-4b9f-9dbc-dd278d8a4aa3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="external\glfw">
+      <UniqueIdentifier>{84c4cd80-7177-42e4-9560-97049b103070}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
     </ClCompile>
@@ -25,6 +30,118 @@
     </ClCompile>
     <ClCompile Include="Util\Log.cpp">
       <Filter>Util</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\cocoa_time.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\context.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\egl_context.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\glx_context.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\init.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\input.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\linux_joystick.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\monitor.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\null_init.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\null_joystick.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\null_monitor.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\null_window.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\osmesa_context.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\platform.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\posix_module.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\posix_poll.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\posix_thread.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\posix_time.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\vulkan.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\wgl_context.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_init.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_joystick.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_module.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_monitor.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_thread.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_time.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\win32_window.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\window.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\wl_init.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\wl_monitor.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\wl_window.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\x11_init.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\x11_monitor.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\x11_window.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\src\xkb_unicode.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="glfwtest.cpp" />
+    <ClCompile Include="external\glfw\deps\getopt.c">
+      <Filter>external\glfw</Filter>
+    </ClCompile>
+    <ClCompile Include="external\glfw\deps\tinycthread.c">
+      <Filter>external\glfw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -45,6 +162,105 @@
     </ClInclude>
     <ClInclude Include="Util\Helper.h">
       <Filter>Util</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\cocoa_joystick.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\cocoa_platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\cocoa_time.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\include\GLFW\glfw3.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\include\GLFW\glfw3native.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\internal.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\linux_joystick.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\xkb_unicode.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\mappings.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\null_joystick.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\null_platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\posix_poll.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\posix_thread.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\posix_time.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\win32_joystick.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\win32_platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\win32_thread.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\win32_time.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\wl_platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\src\x11_platform.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\mingw\_mingw_dxhelper.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\mingw\dinput.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\getopt.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\glad\gl.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\glad\gles2.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\linmath.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\nuklear.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\nuklear_glfw_gl2.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\stb_image_write.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\tinycthread.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\glad\vulkan.h">
+      <Filter>external\glfw</Filter>
+    </ClInclude>
+    <ClInclude Include="external\glfw\deps\mingw\xinput.h">
+      <Filter>external\glfw</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
