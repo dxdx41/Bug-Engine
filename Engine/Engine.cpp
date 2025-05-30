@@ -40,10 +40,11 @@ void Engine::Run(IGame* pGame) {
     Log.info("Running engine");
 
     this->pGame = pGame;
+    pGame->OnInit();
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        pRenderer->ClearBackground({ 0, 0, 0, 255 });
+        pRenderer->ClearBackground({ 196, 250, 255, 255 });
         pRenderer->Present();
     }
 }

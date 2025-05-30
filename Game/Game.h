@@ -18,4 +18,7 @@ public:
 	
 	void OnInit() override;
 private:
+
+	bool vSync{ false }; // not used right now
+
 };

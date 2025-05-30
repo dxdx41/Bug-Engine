@@ -116,6 +116,50 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 		}
 	}
 
+	// EVERYTHING FROM HERE DOWN IS TEMPORARY
+
+	if (!CompileShaders()) return false;
+
+	UINT numVerts;
+	UINT stride;
+	UINT offset;
+	{
+		float vertexData[] = { // x, y, r, g, b, a
+			0.0f,  0.5f, 0.f, 1.f, 0.f, 1.f,
+			0.5f, -0.5f, 1.f, 0.f, 0.f, 1.f,
+			-0.5f, -0.5f, 0.f, 0.f, 1.f, 1.f
+		};
+		stride = 6 * sizeof(float);
+		numVerts = sizeof(vertexData) / stride;
+		offset = 0;
+
+		D3D11_BUFFER_DESC vertexBufferDesc = {};
+		vertexBufferDesc.ByteWidth = sizeof(vertexData);
+		vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+		D3D11_SUBRESOURCE_DATA vertexSubresourceData = { vertexData };
+
+		HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexSubresourceData, pVertexBuffer.GetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("Failed to create buffer");
+			return false;
+		}
+	}
+
+	/* setup to draw */
+	RECT clientRect{};
+	GetClientRect(hWnd, &clientRect);
+	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
+	pContext->RSSetViewports(1, &viewport);
+
+	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
+
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	pContext->IASetInputLayout(pInputLayout.Get());
+
+	pContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
+
 	return true;
 }
 
@@ -129,6 +173,76 @@ void D3DRenderer::ClearBackground(ColorRGB color) {
 	pContext->ClearRenderTargetView(pRenderTargetView.Get(), reinterpret_cast<FLOAT*>(&normalized));
 }
 
+void D3DRenderer::DrawRect(Rect rect, ColorRGB color) {
+
+}
+void D3DRenderer::DrawFilledRect(Rect rect, ColorRGB color, float thickness) {
+
+}
+void D3DRenderer::DrawLine(Vec2 pos, ColorRGB color, float thickness) {
+
+}
+
+
 void D3DRenderer::Present() {
+	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
+	pContext->Draw(3, 0);
 	pSwapChain->Present(1, 0);
+}
+
+
+/* private functions */
+
+bool D3DRenderer::CompileShaders() {
+	// REDO THIS LATER
+
+	/* vertex shader */
+	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob{ nullptr };
+	{
+		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\VertexShader.hlsl"), nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, vsBlob.ReleaseAndGetAddressOf(), nullptr);
+		if (FAILED(hr)) {
+			Log.error("failed to compile shaders from file");
+			return false;
+		}
+
+		hr = pDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, pVertexShader.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("failed to create vertex shader");
+			return false;
+		}
+	}
+	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
+
+	/* pixel shader */
+	Microsoft::WRL::ComPtr<ID3DBlob> psBlob{ nullptr };
+	{	
+		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\PixelShader.hlsl"), nullptr, nullptr, "ps_main", "ps_5_0", 0, 0, psBlob.ReleaseAndGetAddressOf(), nullptr);
+		if (FAILED(hr)) {
+			Log.error("failed to compile shaders from file");
+			return false;
+		}
+
+		hr = pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, pPixelShader.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("failed to create vertex shader");
+			return false;
+		}
+	}
+	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
+
+	{
+		D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+		};
+
+		HRESULT hr = pDevice->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), pInputLayout.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("failed to create input layout");
+			return false;
+		}
+	}
+
+	return true;
 }

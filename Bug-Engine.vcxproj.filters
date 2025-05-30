@@ -23,6 +23,12 @@
     <Filter Include="Engine\Renderer">
       <UniqueIdentifier>{62547a66-a9d2-4251-b0ae-c99b9b489263}</UniqueIdentifier>
     </Filter>
+    <Filter Include="assets">
+      <UniqueIdentifier>{e6934d04-48c2-4d06-95b7-f898cf5f9ba3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="assets\shaders">
+      <UniqueIdentifier>{9adb7349-93cc-4578-b7c1-745deb06f0e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp">
@@ -277,5 +283,16 @@
     <ClInclude Include="Util\Color.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="Util\Types.h">
+      <Filter>Util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="assets\shaders\PixelShader.hlsl">
+      <Filter>assets\shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="assets\shaders\VertexShader.hlsl">
+      <Filter>assets\shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
