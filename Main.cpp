@@ -10,7 +10,10 @@
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
     IEngine* engine{ new Engine() };
-    engine->Initialize();
+    if (!engine->Initialize()) {
+        std::cin.get();
+        return 1;
+    }
 
 
     Game game;

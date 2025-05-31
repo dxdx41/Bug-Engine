@@ -15,6 +15,7 @@
 #include <Windows.h>
 #include <memory>
 #include "Renderer/D3DRenderer.h"
+#include "Renderer/RendererOptions.h"
 
 class Engine : public IEngine {
 public:
@@ -29,8 +30,14 @@ private:
 	HWND hWnd{};
 	/* renderer */
 	std::unique_ptr<IRenderer> pRenderer{ nullptr };
+	RendererOptions opts{};
 
 	IGame* pGame{ nullptr };
 
 	void InitializeLogging();
+
+	void HandleKey(int key, int action);
+	void HandleResize(int width, int height);
+	static void GlobalKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void GlobalWindowSizeCallback(GLFWwindow* window, int width, int height);
 };

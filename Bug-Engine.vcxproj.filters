@@ -286,6 +286,9 @@
     <ClInclude Include="Util\Types.h">
       <Filter>Util</Filter>
     </ClInclude>
+    <ClInclude Include="Engine\Renderer\RendererOptions.h">
+      <Filter>Engine\Renderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="assets\shaders\PixelShader.hlsl">

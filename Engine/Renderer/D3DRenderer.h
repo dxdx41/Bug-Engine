@@ -16,17 +16,21 @@ class D3DRenderer : public IRenderer {
 public:
 	D3DRenderer() = default;
 	~D3DRenderer() override;
-	bool Initialize(HWND hWnd) override;
+	bool Initialize(HWND hWnd, RendererOptions* pRendererOptions) override;
 	void Shutdown() override;
+	void Resize(int width, int height) override;
 	
+	void BeginFrame() override;
+	void EndFrame() override;
+
 	void ClearBackground(ColorRGB color) override;
 	void DrawRect(Rect rect, ColorRGB color) override;
 	void DrawFilledRect(Rect rect, ColorRGB color, float thickness) override;
 	void DrawLine(Vec2 pos, ColorRGB color, float thickness) override;
-
-	void Present() override;
 private:
 	HWND hWnd{};
+	RendererOptions* pOpts{ nullptr };
+
 	Microsoft::WRL::ComPtr<ID3D11Device1> pDevice{ nullptr };
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext1> pContext{ nullptr };
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> pSwapChain{ nullptr };

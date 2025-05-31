@@ -5,11 +5,12 @@ D3DRenderer::~D3DRenderer()
 {
 }
 
-bool D3DRenderer::Initialize(HWND hWnd) {
+bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	Log.info("Initializing renderer...");
 	this->hWnd = hWnd;
+	this->pOpts = pRendererOptions;
 
-	/* create device */
+	/* create device and device context */
 	{ // scope for comptrs
 		Microsoft::WRL::ComPtr<ID3D11Device> baseDevice{ nullptr };
 		Microsoft::WRL::ComPtr<ID3D11DeviceContext> baseContext{ nullptr };
@@ -72,7 +73,7 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 			dxgiAdapter->GetDesc(&adapterDesc);
 
 			std::wstring desc_w{ adapterDesc.Description };
-			Log.info("D3D11 Graphics Device: " + std::string(desc_w.begin(), desc_w.end()));
+			Log.info("Graphics Device: " + std::string(desc_w.begin(), desc_w.end()));
 
 			hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(dxgiFactory.ReleaseAndGetAddressOf()));
 			if (FAILED(hr)) {
@@ -98,9 +99,13 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 		sd.Flags = NULL;
 
 		HRESULT hr = dxgiFactory->CreateSwapChainForHwnd(pDevice.Get(), hWnd, &sd, nullptr, nullptr, pSwapChain.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("Failed to create swapchain");
+			return false;
+		}
 	}
 
-	/* create render target */
+	/* create render target view */
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pFrameBuffer{ nullptr };
 		HRESULT hr = pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(pFrameBuffer.ReleaseAndGetAddressOf()));
@@ -116,9 +121,36 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 		}
 	}
 
+	/* create depth/stencil buffer */
+
+
+
+	/* setup viewport */
+
+	RECT clientRect{};
+	GetClientRect(hWnd, &clientRect);
+	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
+	pContext->RSSetViewports(1, &viewport);
+
+	/* shader compilation */
+	if (!CompileShaders()) return false;
+
+
+	/* setup input layout */
+
+
+
+	/* create static resources */
+
+
+
+	/* setup rasterizer and depth/stencil states */
+
+
+
 	// EVERYTHING FROM HERE DOWN IS TEMPORARY
 
-	if (!CompileShaders()) return false;
+
 
 	UINT numVerts;
 	UINT stride;
@@ -148,11 +180,6 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 	}
 
 	/* setup to draw */
-	RECT clientRect{};
-	GetClientRect(hWnd, &clientRect);
-	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
-	pContext->RSSetViewports(1, &viewport);
-
 	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
 
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -166,7 +193,38 @@ bool D3DRenderer::Initialize(HWND hWnd) {
 void D3DRenderer::Shutdown() {
 }
 
+void D3DRenderer::Resize(int width, int height) {
+	pRenderTargetView.Reset(); // let go of backbuffer
+	pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, NULL);
+	
+	{	// create new render target view based on resized swapchain
+		Microsoft::WRL::ComPtr<ID3D11Texture2D> pBackBuffer{ nullptr };
+		pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(pBackBuffer.ReleaseAndGetAddressOf()));
+		pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pRenderTargetView.ReleaseAndGetAddressOf());
+	}
+	// set viewports
+	RECT clientRect{};
+	GetClientRect(hWnd, &clientRect);
+	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
+	pContext->RSSetViewports(1, &viewport);
+
+}
+
 /* drawing */
+
+void D3DRenderer::BeginFrame() {
+	static FLOAT clr[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+	pContext->ClearRenderTargetView(pRenderTargetView.Get(), clr);
+	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
+}
+
+
+void D3DRenderer::EndFrame() {
+	pContext->Draw(3, 0); // shouldn't be in here, hardcoded for triangle
+	pSwapChain->Present(pOpts->vSync ? 1 : 0, 0);
+}
+
+
 void D3DRenderer::ClearBackground(ColorRGB color) {
 	ColorNorm normalized = color.normalized();
 	// this only works if ColorNorm is the same layout as what ClearRenderTargetView takes (FLOAT[4])
@@ -181,13 +239,6 @@ void D3DRenderer::DrawFilledRect(Rect rect, ColorRGB color, float thickness) {
 }
 void D3DRenderer::DrawLine(Vec2 pos, ColorRGB color, float thickness) {
 
-}
-
-
-void D3DRenderer::Present() {
-	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
-	pContext->Draw(3, 0);
-	pSwapChain->Present(1, 0);
 }
 
 

@@ -124,6 +124,7 @@
     <ClInclude Include="Engine\IEngine.h" />
     <ClInclude Include="Engine\Renderer\IRenderer.h" />
     <ClInclude Include="Engine\Renderer\D3DRenderer.h" />
+    <ClInclude Include="Engine\Renderer\RendererOptions.h" />
     <ClInclude Include="external\glfw\deps\getopt.h" />
     <ClInclude Include="external\glfw\deps\glad\gl.h" />
     <ClInclude Include="external\glfw\deps\glad\gles2.h" />

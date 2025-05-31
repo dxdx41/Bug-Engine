@@ -21,13 +21,21 @@ bool Engine::Initialize() {
         glfwTerminate();
         return false;
     }
+    glfwSetWindowUserPointer(window, this);
+    glfwSetKeyCallback(window, Engine::GlobalKeyCallback);
+    glfwSetWindowSizeCallback(window, Engine::GlobalWindowSizeCallback);
     Log.info("GLFW window created");
     this->hWnd = glfwGetWin32Window(window);
     if (!hWnd) { Log.error("hWnd is invalid"); }
 
     /* RENDERER INITIALIZATION */
     pRenderer = std::make_unique<D3DRenderer>();
-    pRenderer->Initialize(hWnd);
+    if (!pRenderer->Initialize(hWnd, &opts)) {
+        Log.error("Renderer initialization failed");
+        glfwDestroyWindow(window);
+        glfwTerminate();
+        return false;
+    }
 
 
     /* GAME INITIALIZATION */
@@ -44,8 +52,13 @@ void Engine::Run(IGame* pGame) {
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+
+        pRenderer->BeginFrame();
+        
+        // optional
         pRenderer->ClearBackground({ 196, 250, 255, 255 });
-        pRenderer->Present();
+
+        pRenderer->EndFrame();
     }
 }
 
@@ -69,5 +82,35 @@ void Engine::InitializeLogging() {
     freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "r", stdin);
     freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w", stderr);
     Logger::Init();
-    Log.info("<< Logging >>");
+    Log.info("----- Logging Started -----");
+}
+
+
+/* object handlers */
+void Engine::HandleKey(int key, int action) {
+    if (key == GLFW_KEY_F1 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        opts.vSync = !opts.vSync;
+        Log.info("vSync: " + std::string((opts.vSync ? "on" : "off")));
+    }
+}
+void Engine::HandleResize(int width, int height) {
+    // should renderer handle all resize events or split into different functions like
+    // swapchain, rendertargetview, depth/stencil, viewports, scaling
+    pRenderer->Resize(width, height);
+}
+
+/* global static callbacks */
+void Engine::GlobalKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    Engine* engine = reinterpret_cast<Engine*>(glfwGetWindowUserPointer(window));
+    if (engine) {
+        engine->HandleKey(key, action);
+    }
+}
+
+// only called once window is "confirmed" to be resized, e.g. when you let go of the window resize bar
+void Engine::GlobalWindowSizeCallback(GLFWwindow* window, int width, int height) {
+    Engine* engine = reinterpret_cast<Engine*>(glfwGetWindowUserPointer(window));
+    if (engine) {
+        engine->HandleResize(width, height);
+    }
 }
