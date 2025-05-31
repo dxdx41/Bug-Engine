@@ -16,6 +16,7 @@
 #include <memory>
 #include "Renderer/D3DRenderer.h"
 #include "Renderer/RendererOptions.h"
+#include "Timer.h"
 
 class Engine : public IEngine {
 public:
@@ -32,9 +33,12 @@ private:
 	std::unique_ptr<IRenderer> pRenderer{ nullptr };
 	RendererOptions opts{};
 
+	Timer mTimer{};
+
 	IGame* pGame{ nullptr };
 
 	void InitializeLogging();
+	void CalculateFPS();
 
 	void HandleKey(int key, int action);
 	void HandleResize(int width, int height);

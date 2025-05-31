@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Util/Log.h"
+#include <sstream>
 
 Engine::~Engine()
 {
@@ -37,6 +38,8 @@ bool Engine::Initialize() {
         return false;
     }
 
+    Log.info("Aspect ratio: " + std::to_string(pRenderer->AspectRatio()));
+
 
     /* GAME INITIALIZATION */
 
@@ -50,7 +53,10 @@ void Engine::Run(IGame* pGame) {
     this->pGame = pGame;
     pGame->OnInit();
 
+    mTimer.Reset();
     while (!glfwWindowShouldClose(window)) {
+        mTimer.Tick();
+        CalculateFPS();
         glfwPollEvents();
 
         pRenderer->BeginFrame();
@@ -85,6 +91,25 @@ void Engine::InitializeLogging() {
     Log.info("----- Logging Started -----");
 }
 
+void Engine::CalculateFPS() {
+    static int frameCount{ 0 };
+    static float timeElapsed{ 0.0f };
+
+    ++frameCount;
+
+    constexpr float interval{ 2.0f };
+    float currentTime = mTimer.TotalTime();
+    if ((currentTime - timeElapsed) >= interval) {
+        float fps = static_cast<float>(frameCount) / interval;
+
+        std::wostringstream oss{};
+        oss.precision(6);
+        oss << TEXT("FPS: ") << fps;
+        SetWindowText(hWnd, oss.str().c_str());
+        frameCount = 0;
+        timeElapsed = currentTime;
+    }
+}
 
 /* object handlers */
 void Engine::HandleKey(int key, int action) {
@@ -94,9 +119,7 @@ void Engine::HandleKey(int key, int action) {
     }
 }
 void Engine::HandleResize(int width, int height) {
-    // should renderer handle all resize events or split into different functions like
-    // swapchain, rendertargetview, depth/stencil, viewports, scaling
-    pRenderer->Resize(width, height);
+    pRenderer->OnResize(width, height);
 }
 
 /* global static callbacks */

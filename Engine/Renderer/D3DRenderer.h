@@ -16,9 +16,13 @@ class D3DRenderer : public IRenderer {
 public:
 	D3DRenderer() = default;
 	~D3DRenderer() override;
+
 	bool Initialize(HWND hWnd, RendererOptions* pRendererOptions) override;
+	bool CompileShaders() override;
 	void Shutdown() override;
-	void Resize(int width, int height) override;
+	void OnResize(int width, int height) override;
+
+	float AspectRatio() const override;
 	
 	void BeginFrame() override;
 	void EndFrame() override;
@@ -46,6 +50,4 @@ private:
 
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pVertexBuffer{ nullptr };
 	Microsoft::WRL::ComPtr<ID3D11Buffer> pIndexBuffer{ nullptr };
-
-	bool CompileShaders() override;
 };

@@ -12,10 +12,13 @@ class IRenderer {
 public:
 	/* general */
 	virtual ~IRenderer() = default;
+
 	virtual bool Initialize(HWND hWnd, RendererOptions* pRendererOptions) = 0;
 	virtual bool CompileShaders() = 0;
 	virtual void Shutdown() = 0;
-	virtual void Resize(int width, int height) = 0;
+	virtual void OnResize(int width, int height) = 0;
+
+	virtual float AspectRatio() const = 0;
 
 	/* drawing */
 	virtual void BeginFrame() = 0;

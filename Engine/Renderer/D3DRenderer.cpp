@@ -218,9 +218,12 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 }
 
 void D3DRenderer::Shutdown() {
+	// ??????
 }
 
-void D3DRenderer::Resize(int width, int height) {
+void D3DRenderer::OnResize(int width, int height) {
+	// This needs to handle everything on resize, not just the swapchain/backbuffer
+
 	pRenderTargetView.Reset(); // let go of backbuffer
 	pSwapChain->ResizeBuffers(0, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, NULL);
 	
@@ -235,6 +238,10 @@ void D3DRenderer::Resize(int width, int height) {
 	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
 	pContext->RSSetViewports(1, &viewport);
 
+}
+
+float D3DRenderer::AspectRatio() const {
+	return static_cast<float>(clientWidth) / static_cast<float>(clientHeight);
 }
 
 /* drawing */
