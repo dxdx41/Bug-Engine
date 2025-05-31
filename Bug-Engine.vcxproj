@@ -78,6 +78,7 @@
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp" />
     <ClCompile Include="Engine\Renderer\D3DRenderer.cpp" />
+    <ClCompile Include="Engine\Timer.cpp" />
     <ClCompile Include="external\glfw\deps\getopt.c" />
     <ClCompile Include="external\glfw\deps\tinycthread.c" />
     <ClCompile Include="external\glfw\src\cocoa_time.c" />
@@ -125,6 +126,7 @@
     <ClInclude Include="Engine\Renderer\IRenderer.h" />
     <ClInclude Include="Engine\Renderer\D3DRenderer.h" />
     <ClInclude Include="Engine\Renderer\RendererOptions.h" />
+    <ClInclude Include="Engine\Timer.h" />
     <ClInclude Include="external\glfw\deps\getopt.h" />
     <ClInclude Include="external\glfw\deps\glad\gl.h" />
     <ClInclude Include="external\glfw\deps\glad\gles2.h" />
