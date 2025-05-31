@@ -29,12 +29,16 @@ public:
 	void DrawLine(Vec2 pos, ColorRGB color, float thickness) override;
 private:
 	HWND hWnd{};
+	UINT clientWidth{}, clientHeight{};
 	RendererOptions* pOpts{ nullptr };
 
 	Microsoft::WRL::ComPtr<ID3D11Device1> pDevice{ nullptr };
 	Microsoft::WRL::ComPtr<ID3D11DeviceContext1> pContext{ nullptr };
 	Microsoft::WRL::ComPtr<IDXGISwapChain1> pSwapChain{ nullptr };
 	Microsoft::WRL::ComPtr<ID3D11RenderTargetView> pRenderTargetView{ nullptr };
+
+	Microsoft::WRL::ComPtr<ID3D11Texture2D> pDepthStencilBuffer{ nullptr };
+	Microsoft::WRL::ComPtr<ID3D11DepthStencilView> pDepthStencilView{ nullptr };
 
 	Microsoft::WRL::ComPtr<ID3D11VertexShader> pVertexShader{ nullptr };
 	Microsoft::WRL::ComPtr<ID3D11PixelShader> pPixelShader{ nullptr };

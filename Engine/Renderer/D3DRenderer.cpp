@@ -10,6 +10,11 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	this->hWnd = hWnd;
 	this->pOpts = pRendererOptions;
 
+	RECT clientRect{};
+	GetClientRect(hWnd, &clientRect);
+	clientWidth = clientRect.right - clientRect.left;
+	clientHeight = clientRect.bottom - clientRect.top;
+
 	/* create device and device context */
 	{ // scope for comptrs
 		Microsoft::WRL::ComPtr<ID3D11Device> baseDevice{ nullptr };
@@ -83,10 +88,8 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 		}
 
 		DXGI_SWAP_CHAIN_DESC1 sd{};
-		RECT clientRect{};
-		GetClientRect(hWnd, &clientRect);
-		sd.Width = clientRect.right - clientRect.left;
-		sd.Height = clientRect.bottom - clientRect.top;
+		sd.Width = clientWidth;
+		sd.Height = clientHeight;
 		sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		sd.Stereo = FALSE;
 		sd.SampleDesc.Count = 1;
@@ -122,15 +125,40 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	}
 
 	/* create depth/stencil buffer */
+	{
+		D3D11_TEXTURE2D_DESC dsDesc{};
+		dsDesc.Width = clientWidth;
+		dsDesc.Height = clientHeight;
+		dsDesc.MipLevels = 1;
+		dsDesc.ArraySize = 1;
+		dsDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		dsDesc.SampleDesc.Count = 1;
+		dsDesc.SampleDesc.Quality = 0;
+		dsDesc.Usage = D3D11_USAGE_DEFAULT;
+		dsDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+		dsDesc.CPUAccessFlags = NULL;
+		dsDesc.MiscFlags = NULL;
 
+		// returns HRESULT
+		pDevice->CreateTexture2D(&dsDesc, nullptr, pDepthStencilBuffer.ReleaseAndGetAddressOf());
+		pDevice->CreateDepthStencilView(pDepthStencilBuffer.Get(), nullptr, pDepthStencilView.ReleaseAndGetAddressOf());
+
+		pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), pDepthStencilView.Get());
+	}
 
 
 	/* setup viewport */
+	{	// set it to the full client area
+		D3D11_VIEWPORT vp{};
+		vp.TopLeftX = 0.0f;
+		vp.TopLeftY = 0.0f;
+		vp.Width = static_cast<FLOAT>(clientWidth);
+		vp.Height = static_cast<FLOAT>(clientHeight);
+		vp.MinDepth = 0.0f;
+		vp.MaxDepth = 1.0f;
+		pContext->RSSetViewports(1, &vp);
+	}
 
-	RECT clientRect{};
-	GetClientRect(hWnd, &clientRect);
-	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
-	pContext->RSSetViewports(1, &viewport);
 
 	/* shader compilation */
 	if (!CompileShaders()) return false;
@@ -180,7 +208,6 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	}
 
 	/* setup to draw */
-	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
 
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	pContext->IASetInputLayout(pInputLayout.Get());
