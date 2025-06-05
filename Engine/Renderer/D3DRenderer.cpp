@@ -1,5 +1,11 @@
 #include "D3DRenderer.h"
 #include "Util/Log.h"
+#include "Util/Math/Vertices.h"
+
+struct ConstantBuffer
+{
+	DirectX::XMMATRIX worldViewProj;
+};
 
 D3DRenderer::~D3DRenderer()
 {
@@ -22,9 +28,9 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 
 		D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
 		UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
-		#ifdef _DEBUG
-			creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-		#endif
+#ifdef _DEBUG
+		creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
 
 		HRESULT hr = D3D11CreateDevice(
 			nullptr,
@@ -108,6 +114,8 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 		}
 	}
 
+
+
 	/* create render target view */
 	{
 		Microsoft::WRL::ComPtr<ID3D11Texture2D> pFrameBuffer{ nullptr };
@@ -123,6 +131,8 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 			return false;
 		}
 	}
+
+
 
 	/* create depth/stencil buffer */
 	{
@@ -160,59 +170,150 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	}
 
 
+
 	/* shader compilation */
-	if (!CompileShaders()) return false;
-
-
-	/* setup input layout */
-
-
-
-	/* create static resources */
-
-
-
-	/* setup rasterizer and depth/stencil states */
-
-
-
-	// EVERYTHING FROM HERE DOWN IS TEMPORARY
-
-
-
-	UINT numVerts;
-	UINT stride;
-	UINT offset;
+	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob{ nullptr };
 	{
-		float vertexData[] = { // x, y, r, g, b, a
-			0.0f,  0.5f, 0.f, 1.f, 0.f, 1.f,
-			0.5f, -0.5f, 1.f, 0.f, 0.f, 1.f,
-			-0.5f, -0.5f, 0.f, 0.f, 1.f, 1.f
-		};
-		stride = 6 * sizeof(float);
-		numVerts = sizeof(vertexData) / stride;
-		offset = 0;
-
-		D3D11_BUFFER_DESC vertexBufferDesc = {};
-		vertexBufferDesc.ByteWidth = sizeof(vertexData);
-		vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-
-		D3D11_SUBRESOURCE_DATA vertexSubresourceData = { vertexData };
-
-		HRESULT hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexSubresourceData, pVertexBuffer.GetAddressOf());
+		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\VertexShader.hlsl"), nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, vsBlob.ReleaseAndGetAddressOf(), nullptr);
 		if (FAILED(hr)) {
-			Log.error("Failed to create buffer");
+			Log.error("failed to compile shaders from file");
+			return false;
+		}
+
+		hr = pDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, pVertexShader.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("failed to create vertex shader");
 			return false;
 		}
 	}
+	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
+
+	Microsoft::WRL::ComPtr<ID3DBlob> psBlob{ nullptr };
+	{
+		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\PixelShader.hlsl"), nullptr, nullptr, "ps_main", "ps_5_0", 0, 0, psBlob.ReleaseAndGetAddressOf(), nullptr);
+		if (FAILED(hr)) {
+			Log.error("failed to compile shaders from file");
+			return false;
+		}
+
+		hr = pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, pPixelShader.ReleaseAndGetAddressOf());
+		if (FAILED(hr)) {
+			Log.error("failed to create vertex shader");
+			return false;
+		}
+	}
+	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
+
+
+
+	/* setup input layout */
+	D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
+	{
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 }
+	};
+
+	HRESULT hr = pDevice->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), pInputLayout.ReleaseAndGetAddressOf());
+	if (FAILED(hr)) {
+		Log.error("failed to create input layout");
+		return false;
+	}
+
+	pContext->IASetInputLayout(pInputLayout.Get());
+
+	/* create static resources */
+
+	// pos3 color4
+	BasicVertex vertexData[] = {
+		{ { -0.5f, -0.5f, -0.5f }, { 1.0f, 0.0f, 0.0f, 1.0f } }, // Red
+		{ {  0.5f, -0.5f, -0.5f }, { 0.0f, 1.0f, 0.0f, 1.0f } }, // Green
+		{ {  0.5f,  0.5f, -0.5f }, { 0.0f, 0.0f, 1.0f, 1.0f } }, // Blue
+		{ { -0.5f,  0.5f, -0.5f }, { 1.0f, 1.0f, 0.0f, 1.0f } }, // Yellow
+
+		// Back face (z = +0.5)
+		{ { -0.5f, -0.5f,  0.5f }, { 1.0f, 0.0f, 1.0f, 1.0f } }, // Magenta
+		{ {  0.5f, -0.5f,  0.5f }, { 0.0f, 1.0f, 1.0f, 1.0f } }, // Cyan
+		{ {  0.5f,  0.5f,  0.5f }, { 1.0f, 1.0f, 1.0f, 1.0f } }, // White
+		{ { -0.5f,  0.5f,  0.5f }, { 0.0f, 0.0f, 0.0f, 1.0f } }, // Black
+	};
+
+	D3D11_BUFFER_DESC vertexBufferDesc{};
+	vertexBufferDesc.ByteWidth = sizeof(vertexData);
+	vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA vertexSubresourceData = { vertexData };
+
+	hr = pDevice->CreateBuffer(&vertexBufferDesc, &vertexSubresourceData, pCubeVertexBuffer.GetAddressOf());
+	if (FAILED(hr)) {
+		Log.error("Failed to create cube vertex buffer");
+		return false;
+	}
+
+	UINT stride = sizeof(BasicVertex);
+	UINT offset = 0;
+	pContext->IASetVertexBuffers(0, 1, pCubeVertexBuffer.GetAddressOf(), &stride, &offset);
+
+	UINT indices[36] = {
+		0, 2, 1, // front
+		0, 3, 2,
+
+		5, 7, 4, // back
+		5, 6, 7,
+
+		3, 6, 2, // top
+		3, 7, 6,
+		1, 4, 0, // bottom
+		1, 5, 4,
+		1, 6, 5, // right
+		1, 2, 6,
+		4, 3, 0, // left
+		4, 7, 3
+	};
+
+	D3D11_BUFFER_DESC indexBufferDesc{};
+	indexBufferDesc.ByteWidth = sizeof(indices);
+	indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+
+	D3D11_SUBRESOURCE_DATA indexSubresourceData = { indices };
+
+	hr = pDevice->CreateBuffer(&indexBufferDesc, &indexSubresourceData, pCubeIndexBuffer.ReleaseAndGetAddressOf());
+	if (FAILED(hr)) {
+		Log.error("Failed to create cube index buffer");
+		return false;
+	}
+
+	pContext->IASetIndexBuffer(pCubeIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	/* setup rasterizer and depth/stencil states */
+
+	// normal rasterizer state
+	D3D11_RASTERIZER_DESC1 nrm{};
+	nrm.FillMode = D3D11_FILL_SOLID;
+	nrm.CullMode = D3D11_CULL_BACK;
+	nrm.FrontCounterClockwise = false;
+	nrm.DepthClipEnable = true;
+	pDevice->CreateRasterizerState1(&nrm, pNormalRSState.ReleaseAndGetAddressOf());
+
+	D3D11_RASTERIZER_DESC1 wire{};
+	wire.FillMode = D3D11_FILL_WIREFRAME;
+	wire.CullMode = D3D11_CULL_BACK; // maybe needs D3D11_CULL_NONE
+	wire.FrontCounterClockwise = false;
+	wire.DepthClipEnable = true;
+	pDevice->CreateRasterizerState1(&wire, pWireframeRSState.ReleaseAndGetAddressOf());
 
 	/* setup to draw */
 
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	pContext->IASetInputLayout(pInputLayout.Get());
+	D3D11_BUFFER_DESC cbd = {};
+	cbd.Usage = D3D11_USAGE_DEFAULT;
+	cbd.ByteWidth = sizeof(ConstantBuffer);
+	cbd.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	cbd.CPUAccessFlags = 0;
+	pDevice->CreateBuffer(&cbd, nullptr, &pConstantBuffer);
 
-	pContext->IASetVertexBuffers(0, 1, pVertexBuffer.GetAddressOf(), &stride, &offset);
+	pContext->RSSetState(pWireframeRSState.Get());
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return true;
 }
@@ -222,6 +323,8 @@ void D3DRenderer::Shutdown() {
 }
 
 void D3DRenderer::OnResize(int width, int height) {
+	clientWidth = width;
+	clientHeight = height;
 	// This needs to handle everything on resize, not just the swapchain/backbuffer
 
 	pRenderTargetView.Reset(); // let go of backbuffer
@@ -233,10 +336,14 @@ void D3DRenderer::OnResize(int width, int height) {
 		pDevice->CreateRenderTargetView(pBackBuffer.Get(), nullptr, pRenderTargetView.ReleaseAndGetAddressOf());
 	}
 	// set viewports
-	RECT clientRect{};
-	GetClientRect(hWnd, &clientRect);
-	D3D11_VIEWPORT viewport = { 0.0f, 0.0f, (FLOAT)(clientRect.right - clientRect.left), (FLOAT)(clientRect.bottom - clientRect.top), 0.0f, 1.0f };
-	pContext->RSSetViewports(1, &viewport);
+	D3D11_VIEWPORT vp{};
+	vp.TopLeftX = 0.0f;
+	vp.TopLeftY = 0.0f;
+	vp.Width = static_cast<FLOAT>(clientWidth);
+	vp.Height = static_cast<FLOAT>(clientHeight);
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	pContext->RSSetViewports(1, &vp);
 
 }
 
@@ -247,14 +354,12 @@ float D3DRenderer::AspectRatio() const {
 /* drawing */
 
 void D3DRenderer::BeginFrame() {
-	static FLOAT clr[4] = {1.0f, 1.0f, 1.0f, 1.0f};
-	pContext->ClearRenderTargetView(pRenderTargetView.Get(), clr);
+	pContext->ClearDepthStencilView(pDepthStencilView.Get(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 	pContext->OMSetRenderTargets(1, pRenderTargetView.GetAddressOf(), nullptr);
 }
 
 
 void D3DRenderer::EndFrame() {
-	pContext->Draw(3, 0); // shouldn't be in here, hardcoded for triangle
 	pSwapChain->Present(pOpts->vSync ? 1 : 0, 0);
 }
 
@@ -275,58 +380,60 @@ void D3DRenderer::DrawLine(Vec2 pos, ColorRGB color, float thickness) {
 
 }
 
+void D3DRenderer::DrawCube(Vec3 pos) {
+	using namespace DirectX;
+
+	XMMATRIX I = XMMatrixIdentity();
+	XMStoreFloat4x4(&mWorld, I);
+	XMStoreFloat4x4(&mView, I);
+	XMStoreFloat4x4(&mProj, I);
+
+	XMMATRIX T = XMMatrixTranslation(pos.x, pos.y, pos.z);
+	XMStoreFloat4x4(&mWorld, T);
+
+	XMMATRIX projec = XMMatrixPerspectiveFovLH(XM_PIDIV4, AspectRatio(), 0.1f, 100.0f);
+	XMStoreFloat4x4(&mProj, projec);
+
+	XMVECTOR position = XMVectorSet(0, 0, -5.f, 1.0f);
+	XMVECTOR target = XMVectorZero();
+	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+
+	XMMATRIX V = XMMatrixLookAtLH(position, target, up);
+	XMStoreFloat4x4(&mView, V);
+
+
+	pContext->IASetInputLayout(pInputLayout.Get());
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	UINT stride = sizeof(BasicVertex);
+	UINT offset = 0;
+	pContext->IASetVertexBuffers(0, 1, pCubeVertexBuffer.GetAddressOf(), &stride, &offset);
+	pContext->IASetIndexBuffer(pCubeIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+	XMMATRIX world = XMLoadFloat4x4(&mWorld);
+	XMMATRIX view = XMLoadFloat4x4(&mView);
+	XMMATRIX proj = XMLoadFloat4x4(&mProj);
+	XMMATRIX worldViewProj = world * view * proj;
+
+	ConstantBuffer cb{};
+	cb.worldViewProj = XMMatrixTranspose(worldViewProj); // Transpose before sending
+
+	pContext->UpdateSubresource(pConstantBuffer.Get(), 0, nullptr, &cb, 0, 0);
+	pContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
+
+
+	pContext->DrawIndexed(36, 0, 0);
+}
 
 /* private functions */
 
 bool D3DRenderer::CompileShaders() {
 	// REDO THIS LATER
 
-	/* vertex shader */
-	Microsoft::WRL::ComPtr<ID3DBlob> vsBlob{ nullptr };
-	{
-		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\VertexShader.hlsl"), nullptr, nullptr, "vs_main", "vs_5_0", 0, 0, vsBlob.ReleaseAndGetAddressOf(), nullptr);
-		if (FAILED(hr)) {
-			Log.error("failed to compile shaders from file");
-			return false;
-		}
 
-		hr = pDevice->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, pVertexShader.ReleaseAndGetAddressOf());
-		if (FAILED(hr)) {
-			Log.error("failed to create vertex shader");
-			return false;
-		}
-	}
-	pContext->VSSetShader(pVertexShader.Get(), nullptr, 0);
-
-	/* pixel shader */
-	Microsoft::WRL::ComPtr<ID3DBlob> psBlob{ nullptr };
-	{	
-		HRESULT hr = D3DCompileFromFile(TEXT("assets\\shaders\\PixelShader.hlsl"), nullptr, nullptr, "ps_main", "ps_5_0", 0, 0, psBlob.ReleaseAndGetAddressOf(), nullptr);
-		if (FAILED(hr)) {
-			Log.error("failed to compile shaders from file");
-			return false;
-		}
-
-		hr = pDevice->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, pPixelShader.ReleaseAndGetAddressOf());
-		if (FAILED(hr)) {
-			Log.error("failed to create vertex shader");
-			return false;
-		}
-	}
-	pContext->PSSetShader(pPixelShader.Get(), nullptr, 0);
 
 	{
-		D3D11_INPUT_ELEMENT_DESC inputElementDesc[] =
-		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0 }
-		};
 
-		HRESULT hr = pDevice->CreateInputLayout(inputElementDesc, ARRAYSIZE(inputElementDesc), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), pInputLayout.ReleaseAndGetAddressOf());
-		if (FAILED(hr)) {
-			Log.error("failed to create input layout");
-			return false;
-		}
 	}
 
 	return true;

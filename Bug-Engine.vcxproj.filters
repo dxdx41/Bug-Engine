@@ -29,6 +29,9 @@
     <Filter Include="assets\shaders">
       <UniqueIdentifier>{9adb7349-93cc-4578-b7c1-745deb06f0e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Util\Math">
+      <UniqueIdentifier>{947a370e-a11c-4e48-817a-363e927e7e14}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp">
@@ -294,6 +297,15 @@
     </ClInclude>
     <ClInclude Include="Engine\Timer.h">
       <Filter>Engine</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Math\Vertices.h">
+      <Filter>Util\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Math\Mat4.h">
+      <Filter>Util\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="Util\Math\Vectors.h">
+      <Filter>Util\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

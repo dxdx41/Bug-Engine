@@ -17,6 +17,8 @@
 #include "Renderer/D3DRenderer.h"
 #include "Renderer/RendererOptions.h"
 #include "Timer.h"
+#include "Util/Math/Vectors.h"
+#include "Util/Math/Mat4.h"
 
 class Engine : public IEngine {
 public:
@@ -33,9 +35,16 @@ private:
 	std::unique_ptr<IRenderer> pRenderer{ nullptr };
 	RendererOptions opts{};
 
+	/* game */
 	Timer mTimer{};
-
 	IGame* pGame{ nullptr };
+
+
+	Mat4 identity{};
+	Vec3 cubePos{0, 0, 5};
+
+
+
 
 	void InitializeLogging();
 	void CalculateFPS();

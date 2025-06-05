@@ -6,6 +6,8 @@
 #include <Windows.h>
 #include "Util/Color.h"
 #include "Util/Types.h"
+#include "Util/Math/Vectors.h"
+#include "Util/Math/Mat4.h"
 #include "RendererOptions.h"
 
 class IRenderer {
@@ -28,4 +30,6 @@ public:
 	virtual void DrawRect(Rect rect, ColorRGB color) = 0;
 	virtual void DrawFilledRect(Rect rect, ColorRGB color, float thickness) = 0;
 	virtual void DrawLine(Vec2 pos, ColorRGB color, float thickness) = 0;
+
+	virtual void DrawCube(Vec3 pos) = 0;
 };

@@ -165,6 +165,9 @@
     <ClInclude Include="Util\Color.h" />
     <ClInclude Include="Util\Helper.h" />
     <ClInclude Include="Util\Log.h" />
+    <ClInclude Include="Util\Math\Mat4.h" />
+    <ClInclude Include="Util\Math\Vectors.h" />
+    <ClInclude Include="Util\Math\Vertices.h" />
     <ClInclude Include="Util\Types.h" />
   </ItemGroup>
   <ItemGroup>

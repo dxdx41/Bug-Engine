@@ -43,12 +43,10 @@ void Logger::Init(bool LogToConsole/*  = true  */, bool LogToFile/*  = false  */
 }
 
 void Logger::baselog(const std::string& msg, int color) {
-	if (!logToConsole) return;
 	if (logTime) { std::cout << TimeStamp() << " "; }
 	SetConsoleTextAttribute(hStdout, color);
 	std::cout << msg << std::endl;
 	SetConsoleTextAttribute(hStdout, CONSOLE_DEFAULT_COLOR);
-
 
 	if (!logToFile) return;
 

@@ -63,6 +63,7 @@ void Engine::Run(IGame* pGame) {
         
         // optional
         pRenderer->ClearBackground({ 196, 250, 255, 255 });
+        pRenderer->DrawCube(cubePos);
 
         pRenderer->EndFrame();
     }
@@ -82,11 +83,13 @@ void Engine::Shutdown() {
 
 /* Private Functions */
 void Engine::InitializeLogging() {
+#ifdef _DEBUG
     AllocConsole();
     SetConsoleTitle(TEXT("Debug Console"));
     freopen_s(reinterpret_cast<FILE**>(stdout), "CONOUT$", "w", stdout);
     freopen_s(reinterpret_cast<FILE**>(stdin), "CONIN$", "r", stdin);
     freopen_s(reinterpret_cast<FILE**>(stderr), "CONOUT$", "w", stderr);
+#endif
     Logger::Init();
     Log.info("----- Logging Started -----");
 }
@@ -116,6 +119,18 @@ void Engine::HandleKey(int key, int action) {
     if (key == GLFW_KEY_F1 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         opts.vSync = !opts.vSync;
         Log.info("vSync: " + std::string((opts.vSync ? "on" : "off")));
+    }
+    if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubePos.x -= 0.1;
+    }
+    if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubePos.x += 0.1;
+    }
+    if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubePos.y += 0.1;
+    }
+    if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubePos.y -= 0.1;
     }
 }
 void Engine::HandleResize(int width, int height) {
