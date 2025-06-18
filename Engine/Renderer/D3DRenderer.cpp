@@ -312,7 +312,7 @@ bool D3DRenderer::Initialize(HWND hWnd, RendererOptions* pRendererOptions) {
 	cbd.CPUAccessFlags = 0;
 	pDevice->CreateBuffer(&cbd, nullptr, &pConstantBuffer);
 
-	pContext->RSSetState(pWireframeRSState.Get());
+	pContext->RSSetState(pNormalRSState.Get());
 	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	return true;

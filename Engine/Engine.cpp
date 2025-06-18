@@ -70,6 +70,19 @@ void Engine::Run() {
             camera.x += speed;
         }
 
+        if (glfwGetKey(window, GLFW_KEY_UP)) {
+            cubeRot.x += speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN)) {
+            cubeRot.x -= speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_LEFT)) {
+            cubeRot.y += speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
+            cubeRot.y -= speed;
+        }
+
         pRenderer->BeginFrame();
         
         // optional
@@ -130,18 +143,6 @@ void Engine::HandleKey(int key, int action) {
     if (key == GLFW_KEY_F1 && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
         opts.vSync = !opts.vSync;
         Log.info("vSync: " + std::string((opts.vSync ? "on" : "off")));
-    }
-    if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubeRot.x += 0.1;
-    }
-    if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubeRot.x -= 0.1;
-    }
-    if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubeRot.y += 0.1;
-    }
-    if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubeRot.y -= 0.1;
     }
 }
 void Engine::HandleResize(int width, int height) {
