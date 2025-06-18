@@ -380,35 +380,25 @@ void D3DRenderer::DrawLine(Vec2 pos, ColorRGB color, float thickness) {
 
 }
 
-void D3DRenderer::DrawCube(Vec3 pos) {
+void D3DRenderer::DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) {
 	using namespace DirectX;
 
-	XMMATRIX I = XMMatrixIdentity();
-	XMStoreFloat4x4(&mWorld, I);
-	XMStoreFloat4x4(&mView, I);
-	XMStoreFloat4x4(&mProj, I);
-
+	XMMATRIX S = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	XMMATRIX R = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
 	XMMATRIX T = XMMatrixTranslation(pos.x, pos.y, pos.z);
-	XMStoreFloat4x4(&mWorld, T);
+	XMMATRIX SRT = S * R * T;
+	XMStoreFloat4x4(&mWorld, SRT);
 
-	XMMATRIX projec = XMMatrixPerspectiveFovLH(XM_PIDIV4, AspectRatio(), 0.1f, 100.0f);
+	XMMATRIX projec = XMMatrixPerspectiveFovLH(XM_PIDIV4, AspectRatio(), 0.1f, 1000.0f);
 	XMStoreFloat4x4(&mProj, projec);
 
-	XMVECTOR position = XMVectorSet(0, 0, -5.f, 1.0f);
-	XMVECTOR target = XMVectorZero();
+	XMVECTOR position = XMVectorSet(camera.x, camera.y, camera.z, 1.0f);
+	XMVECTOR forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR target = XMVectorAdd(position, forward);
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX V = XMMatrixLookAtLH(position, target, up);
 	XMStoreFloat4x4(&mView, V);
-
-
-	pContext->IASetInputLayout(pInputLayout.Get());
-	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	UINT stride = sizeof(BasicVertex);
-	UINT offset = 0;
-	pContext->IASetVertexBuffers(0, 1, pCubeVertexBuffer.GetAddressOf(), &stride, &offset);
-	pContext->IASetIndexBuffer(pCubeIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 
 	XMMATRIX world = XMLoadFloat4x4(&mWorld);
 	XMMATRIX view = XMLoadFloat4x4(&mView);
@@ -418,6 +408,13 @@ void D3DRenderer::DrawCube(Vec3 pos) {
 	ConstantBuffer cb{};
 	cb.worldViewProj = XMMatrixTranspose(worldViewProj); // Transpose before sending
 
+	pContext->IASetInputLayout(pInputLayout.Get());
+	pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	UINT stride = sizeof(BasicVertex);
+	UINT offset = 0;
+	pContext->IASetVertexBuffers(0, 1, pCubeVertexBuffer.GetAddressOf(), &stride, &offset);
+	pContext->IASetIndexBuffer(pCubeIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
 	pContext->UpdateSubresource(pConstantBuffer.Get(), 0, nullptr, &cb, 0, 0);
 	pContext->VSSetConstantBuffers(0, 1, pConstantBuffer.GetAddressOf());
 

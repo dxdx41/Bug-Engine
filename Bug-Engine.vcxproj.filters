@@ -8,9 +8,6 @@
     <Filter Include="Engine">
       <UniqueIdentifier>{5b7bd9f1-c103-406e-8f7a-e971291bb993}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Game">
-      <UniqueIdentifier>{c3930cb1-f09b-41af-b131-f1225c6e81db}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Util">
       <UniqueIdentifier>{502ef1dc-ae35-4533-ad0c-ef588d8278e9}</UniqueIdentifier>
     </Filter>
@@ -36,9 +33,6 @@
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp">
       <Filter>Engine</Filter>
-    </ClCompile>
-    <ClCompile Include="Game\Game.cpp">
-      <Filter>Game</Filter>
     </ClCompile>
     <ClCompile Include="Util\Log.cpp">
       <Filter>Util</Filter>
@@ -165,12 +159,6 @@
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h">
       <Filter>Engine</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\Game.h">
-      <Filter>Game</Filter>
-    </ClInclude>
-    <ClInclude Include="Game\IGame.h">
-      <Filter>Game</Filter>
     </ClInclude>
     <ClInclude Include="Engine\IEngine.h">
       <Filter>Engine</Filter>

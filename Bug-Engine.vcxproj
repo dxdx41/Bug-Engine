@@ -116,7 +116,6 @@
     <ClCompile Include="external\glfw\src\x11_monitor.c" />
     <ClCompile Include="external\glfw\src\x11_window.c" />
     <ClCompile Include="external\glfw\src\xkb_unicode.c" />
-    <ClCompile Include="Game\Game.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="Util\Log.cpp" />
   </ItemGroup>
@@ -160,8 +159,6 @@
     <ClInclude Include="external\glfw\src\wl_platform.h" />
     <ClInclude Include="external\glfw\src\x11_platform.h" />
     <ClInclude Include="external\glfw\src\xkb_unicode.h" />
-    <ClInclude Include="Game\Game.h" />
-    <ClInclude Include="Game\IGame.h" />
     <ClInclude Include="Util\Color.h" />
     <ClInclude Include="Util\Helper.h" />
     <ClInclude Include="Util\Log.h" />

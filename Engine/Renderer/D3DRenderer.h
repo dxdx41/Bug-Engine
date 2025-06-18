@@ -34,7 +34,7 @@ public:
 	void DrawFilledRect(Rect rect, ColorRGB color, float thickness) override;
 	void DrawLine(Vec2 pos, ColorRGB color, float thickness) override;
 
-	void DrawCube(Vec3 pos) override;
+	void DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) override;
 private:
 	HWND hWnd{};
 	UINT clientWidth{}, clientHeight{};

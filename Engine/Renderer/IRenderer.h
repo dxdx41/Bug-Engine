@@ -31,5 +31,5 @@ public:
 	virtual void DrawFilledRect(Rect rect, ColorRGB color, float thickness) = 0;
 	virtual void DrawLine(Vec2 pos, ColorRGB color, float thickness) = 0;
 
-	virtual void DrawCube(Vec3 pos) = 0;
+	virtual void DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) = 0;
 };

@@ -25,7 +25,7 @@ public:
 	Engine() = default;
 	~Engine() override;
 	bool Initialize() override;
-	void Run(IGame* pGame) override;
+	void Run() override;
 	void Shutdown() override;
 private:
 	/* window */
@@ -37,11 +37,13 @@ private:
 
 	/* game */
 	Timer mTimer{};
-	IGame* pGame{ nullptr };
 
+
+	Vec3 camera{ 0, 0, 0 };
 
 	Mat4 identity{};
-	Vec3 cubePos{0, 0, 5};
+	Vec3 cubePos{ 0, 0, 5 };
+	Vec3 cubeRot{ 0, 0, 0 };
 
 
 

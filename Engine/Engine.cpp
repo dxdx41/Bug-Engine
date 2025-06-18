@@ -47,11 +47,8 @@ bool Engine::Initialize() {
     return true;
 }
 
-void Engine::Run(IGame* pGame) {
+void Engine::Run() {
     Log.info("Running engine");
-
-    this->pGame = pGame;
-    pGame->OnInit();
 
     mTimer.Reset();
     while (!glfwWindowShouldClose(window)) {
@@ -59,11 +56,25 @@ void Engine::Run(IGame* pGame) {
         CalculateFPS();
         glfwPollEvents();
 
+        constexpr float speed = 0.05f;
+        if (glfwGetKey(window, GLFW_KEY_W)) {
+            camera.z += speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_S)) {
+            camera.z -= speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_A)) {
+            camera.x -= speed;
+        }
+        if (glfwGetKey(window, GLFW_KEY_D)) {
+            camera.x += speed;
+        }
+
         pRenderer->BeginFrame();
         
         // optional
-        pRenderer->ClearBackground({ 196, 250, 255, 255 });
-        pRenderer->DrawCube(cubePos);
+        pRenderer->ClearBackground({ 0, 0, 0, 255 });
+        pRenderer->DrawCube(camera, cubePos, cubeRot);
 
         pRenderer->EndFrame();
     }
@@ -120,17 +131,17 @@ void Engine::HandleKey(int key, int action) {
         opts.vSync = !opts.vSync;
         Log.info("vSync: " + std::string((opts.vSync ? "on" : "off")));
     }
-    if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubePos.x -= 0.1;
+    if (key == GLFW_KEY_UP && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubeRot.x += 0.1;
     }
-    if (key == GLFW_KEY_D && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubePos.x += 0.1;
+    if (key == GLFW_KEY_DOWN && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubeRot.x -= 0.1;
     }
-    if (key == GLFW_KEY_W && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubePos.y += 0.1;
+    if (key == GLFW_KEY_LEFT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubeRot.y += 0.1;
     }
-    if (key == GLFW_KEY_S && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
-        cubePos.y -= 0.1;
+    if (key == GLFW_KEY_RIGHT && (action == GLFW_PRESS || action == GLFW_REPEAT)) {
+        cubeRot.y -= 0.1;
     }
 }
 void Engine::HandleResize(int width, int height) {
