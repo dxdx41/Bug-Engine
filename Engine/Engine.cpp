@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Util/Log.h"
 #include <sstream>
+#include <algorithm>
 
 Engine::~Engine()
 {
@@ -24,7 +25,13 @@ bool Engine::Initialize() {
     }
     glfwSetWindowUserPointer(window, this);
     glfwSetKeyCallback(window, Engine::GlobalKeyCallback);
+    glfwSetCursorPosCallback(window, Engine::GlobalCursorCallback);
     glfwSetWindowSizeCallback(window, Engine::GlobalWindowSizeCallback);
+
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+    if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
     Log.info("GLFW window created");
     this->hWnd = glfwGetWin32Window(window);
     if (!hWnd) { Log.error("hWnd is invalid"); }
@@ -38,11 +45,7 @@ bool Engine::Initialize() {
         return false;
     }
 
-    Log.info("Aspect ratio: " + std::to_string(pRenderer->AspectRatio()));
-
-
-    /* GAME INITIALIZATION */
-
+    pController = std::make_unique<PlayerController>();
 
     return true;
 }
@@ -57,37 +60,36 @@ void Engine::Run() {
         glfwPollEvents();
 
         constexpr float speed = 0.05f;
+
+        XMVECTOR pos = XMLoadFloat3(&pController->m_Pos);
+        XMVECTOR unitForward = pController->GetForward() * speed;
+
         if (glfwGetKey(window, GLFW_KEY_W)) {
-            camera.z += speed;
+            XMVECTOR newPos = XMVectorAdd(pos, unitForward);
+            XMStoreFloat3(&pController->m_Pos, newPos);
         }
         if (glfwGetKey(window, GLFW_KEY_S)) {
-            camera.z -= speed;
+            XMVECTOR newPos = XMVectorAdd(pos, -unitForward);
+            XMStoreFloat3(&pController->m_Pos, newPos);
         }
         if (glfwGetKey(window, GLFW_KEY_A)) {
-            camera.x -= speed;
+            XMVECTOR left = XMVector3Cross(unitForward, XMVECTOR{0, 1, 0});
+            XMVECTOR newPos = XMVectorAdd(pos, left);
+            XMStoreFloat3(&pController->m_Pos, newPos);
         }
         if (glfwGetKey(window, GLFW_KEY_D)) {
-            camera.x += speed;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_UP)) {
-            cubeRot.x += speed;
-        }
-        if (glfwGetKey(window, GLFW_KEY_DOWN)) {
-            cubeRot.x -= speed;
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT)) {
-            cubeRot.y += speed;
-        }
-        if (glfwGetKey(window, GLFW_KEY_RIGHT)) {
-            cubeRot.y -= speed;
+            XMVECTOR right = -XMVector3Cross(unitForward, XMVECTOR{ 0, 1, 0 });
+            XMVECTOR newPos = XMVectorAdd(pos, right);
+            XMStoreFloat3(&pController->m_Pos, newPos);
         }
 
         pRenderer->BeginFrame();
         
         // optional
         pRenderer->ClearBackground({ 0, 0, 0, 255 });
-        pRenderer->DrawCube(camera, cubePos, cubeRot);
+        pRenderer->DrawCube(pController.get(), groundPos, groundRot, groundScaling);
+        pRenderer->DrawCube(pController.get(), cubePos, cubeRot, cubeScaling);
+
 
         pRenderer->EndFrame();
     }
@@ -145,6 +147,30 @@ void Engine::HandleKey(int key, int action) {
         Log.info("vSync: " + std::string((opts.vSync ? "on" : "off")));
     }
 }
+void Engine::HandleCursor(double x, double y) {
+    static bool firstmouse{ true };
+    if (firstmouse) {
+        PrevCursor.x = x;
+        PrevCursor.y = y;
+        firstmouse = false;
+    }
+
+    float xoffset = x - PrevCursor.x;
+    float yoffset = PrevCursor.y - y;  // reversed: y ranges bottom to top
+
+    constexpr float sensitivity = 0.05f;
+    xoffset *= sensitivity;
+    yoffset *= sensitivity;
+
+
+    PrevCursor.x = x;
+    PrevCursor.y = y;
+
+    pController->m_Rotation.x += xoffset;
+    pController->m_Rotation.y += yoffset;
+
+    pController->m_Rotation.y = std::clamp(pController->m_Rotation.y, -89.0f, 89.0f);
+}
 void Engine::HandleResize(int width, int height) {
     pRenderer->OnResize(width, height);
 }
@@ -156,7 +182,12 @@ void Engine::GlobalKeyCallback(GLFWwindow* window, int key, int scancode, int ac
         engine->HandleKey(key, action);
     }
 }
-
+void Engine::GlobalCursorCallback(GLFWwindow* window, double xpos, double ypos) {
+    Engine* engine = reinterpret_cast<Engine*>(glfwGetWindowUserPointer(window));
+    if (engine) {
+        engine->HandleCursor(xpos, ypos);
+    }
+}
 // only called once window is "confirmed" to be resized, e.g. when you let go of the window resize bar
 void Engine::GlobalWindowSizeCallback(GLFWwindow* window, int width, int height) {
     Engine* engine = reinterpret_cast<Engine*>(glfwGetWindowUserPointer(window));

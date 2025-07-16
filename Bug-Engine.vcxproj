@@ -77,6 +77,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Engine\Engine.cpp" />
+    <ClCompile Include="Engine\PlayerController.cpp" />
     <ClCompile Include="Engine\Renderer\D3DRenderer.cpp" />
     <ClCompile Include="Engine\Timer.cpp" />
     <ClCompile Include="external\glfw\deps\getopt.c" />
@@ -122,6 +123,7 @@
   <ItemGroup>
     <ClInclude Include="Engine\Engine.h" />
     <ClInclude Include="Engine\IEngine.h" />
+    <ClInclude Include="Engine\PlayerController.h" />
     <ClInclude Include="Engine\Renderer\IRenderer.h" />
     <ClInclude Include="Engine\Renderer\D3DRenderer.h" />
     <ClInclude Include="Engine\Renderer\RendererOptions.h" />

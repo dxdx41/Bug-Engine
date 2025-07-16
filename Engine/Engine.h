@@ -19,6 +19,7 @@
 #include "Timer.h"
 #include "Util/Math/Vectors.h"
 #include "Util/Math/Mat4.h"
+#include "PlayerController.h"
 
 class Engine : public IEngine {
 public:
@@ -38,12 +39,18 @@ private:
 	/* game */
 	Timer mTimer{};
 
+	std::unique_ptr<PlayerController> pController{ nullptr };
 
-	Vec3 camera{ 0, 0, 0 };
+	Vec2 PrevCursor{ 0, 0 };
 
 	Mat4 identity{};
 	Vec3 cubePos{ 0, 0, 5 };
 	Vec3 cubeRot{ 0, 0, 0 };
+	Vec3 cubeScaling{ 1, 1, 1 };
+
+	Vec3 groundPos{ 0, -1, 0 };
+	Vec3 groundRot{ 0, 0, 0 };
+	Vec3 groundScaling{ 10, 1, 10 };
 
 
 
@@ -52,7 +59,9 @@ private:
 	void CalculateFPS();
 
 	void HandleKey(int key, int action);
+	void HandleCursor(double x, double y);
 	void HandleResize(int width, int height);
 	static void GlobalKeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
+	static void GlobalCursorCallback(GLFWwindow* window, double xpos, double ypos);
 	static void GlobalWindowSizeCallback(GLFWwindow* window, int width, int height);
 };

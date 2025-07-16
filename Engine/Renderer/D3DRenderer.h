@@ -13,6 +13,7 @@
 #include <d3dcompiler.h>
 #pragma comment(lib, "d3dcompiler.lib")
 #include <wrl.h>
+#include "Engine/PlayerController.h"
 
 class D3DRenderer : public IRenderer {
 public:
@@ -34,7 +35,7 @@ public:
 	void DrawFilledRect(Rect rect, ColorRGB color, float thickness) override;
 	void DrawLine(Vec2 pos, ColorRGB color, float thickness) override;
 
-	void DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) override;
+	void DrawCube(PlayerController* pController, Vec3 pos, Vec3 rotation, Vec3 scaling) override;
 private:
 	HWND hWnd{};
 	UINT clientWidth{}, clientHeight{};

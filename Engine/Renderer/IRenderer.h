@@ -9,6 +9,7 @@
 #include "Util/Math/Vectors.h"
 #include "Util/Math/Mat4.h"
 #include "RendererOptions.h"
+#include "Engine/PlayerController.h"
 
 class IRenderer {
 public:
@@ -31,5 +32,5 @@ public:
 	virtual void DrawFilledRect(Rect rect, ColorRGB color, float thickness) = 0;
 	virtual void DrawLine(Vec2 pos, ColorRGB color, float thickness) = 0;
 
-	virtual void DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) = 0;
+	virtual void DrawCube(PlayerController* pController, Vec3 pos, Vec3 rotation, Vec3 scaling) = 0;
 };

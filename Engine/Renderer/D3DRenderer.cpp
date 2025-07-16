@@ -380,10 +380,10 @@ void D3DRenderer::DrawLine(Vec2 pos, ColorRGB color, float thickness) {
 
 }
 
-void D3DRenderer::DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) {
+void D3DRenderer::DrawCube(PlayerController* pController, Vec3 pos, Vec3 rotation, Vec3 scaling) {
 	using namespace DirectX;
 
-	XMMATRIX S = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	XMMATRIX S = XMMatrixScaling(scaling.x, scaling.y, scaling.z);
 	XMMATRIX R = XMMatrixRotationRollPitchYaw(rotation.x, rotation.y, rotation.z);
 	XMMATRIX T = XMMatrixTranslation(pos.x, pos.y, pos.z);
 	XMMATRIX SRT = S * R * T;
@@ -392,9 +392,9 @@ void D3DRenderer::DrawCube(Vec3 camera, Vec3 pos, Vec3 rotation) {
 	XMMATRIX projec = XMMatrixPerspectiveFovLH(XM_PIDIV4, AspectRatio(), 0.1f, 1000.0f);
 	XMStoreFloat4x4(&mProj, projec);
 
-	XMVECTOR position = XMVectorSet(camera.x, camera.y, camera.z, 1.0f);
-	XMVECTOR forward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	XMVECTOR target = XMVectorAdd(position, forward);
+	XMVECTOR position = XMVectorSet(pController->m_Pos.x, pController->m_Pos.y, pController->m_Pos.z, 1.0f);
+
+	XMVECTOR target = XMVectorAdd(position, pController->GetView());
 	XMVECTOR up = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
 	XMMATRIX V = XMMatrixLookAtLH(position, target, up);
